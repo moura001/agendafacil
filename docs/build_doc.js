@@ -167,7 +167,7 @@ c.push(tabela([0.9, 5.6, 2.5], ["Código", "Descrição", "Tipo"], [
   ["RF05", "Cancelar um agendamento", "Funcional"],
   ["RNF01", "A interface deve funcionar em telas de celular", "Usabilidade"],
   ["RNF02", "Toda validação deve ser refeita no servidor", "Segurança / integridade"],
-  ["RNF03", "O sistema deve rodar sem instalar dependências externas", "Portabilidade"],
+  ["RNF03", "O sistema deve ser executado com um único comando, criando o banco automaticamente", "Portabilidade"],
 ]));
 c.push(fonte("elaborado pelo autor (2026)."));
 
@@ -216,13 +216,14 @@ c.push(tit("5.2 Preparação do ambiente"));
 c.push(legenda("Quadro 7 – Tecnologias utilizadas e justificativa"));
 c.push(tabela([1.6, 2.6, 4.3], ["Camada", "Tecnologia", "Justificativa"], [
   ["Frontend", "HTML5, CSS3 e JavaScript", "Roda em qualquer navegador, inclusive no celular, sem etapa de compilação"],
-  ["Backend", "Python 3, módulo http.server", "Biblioteca padrão: não exige instalar dependências e simplifica a execução por quem avalia"],
-  ["Banco de dados", "SQLite", "Banco em arquivo, criado automaticamente, adequado ao porte da PoC"],
-  ["Testes", "unittest", "Biblioteca padrão do Python"],
+  ["Backend", "C# com .NET 8 (ASP.NET Core Minimal API)", "Plataforma multiplataforma e de longo suporte; a Minimal API declara cada rota em poucas linhas, sem código de infraestrutura"],
+  ["Banco de dados", "SQLite, acessado com Microsoft.Data.Sqlite", "Banco em arquivo, criado automaticamente, adequado ao porte da PoC; o SQL é escrito diretamente, sem ORM, deixando as consultas explícitas"],
+  ["Testes", "xUnit", "Framework de testes padrão do ecossistema .NET"],
   ["Versionamento", "Git e GitHub", "Histórico de contribuições e entrega do código"],
 ]));
 c.push(fonte("elaborado pelo autor (2026)."));
-c.push(body("O repositório foi organizado em três pastas: backend (servidor e testes), frontend (interface) e docs (documentação e capturas de tela). A escolha de usar somente a biblioteca padrão foi deliberada: reduz os riscos de execução em outro computador, que é justamente o que a PoC precisa demonstrar."));
+c.push(body("O repositório foi organizado nas pastas backend-csharp (projeto da API e projeto de testes, reunidos na solução AgendaFacil.sln), frontend (interface) e docs (documentação e capturas de tela). As dependências são baixadas automaticamente pelo .NET na primeira execução, de modo que basta um único comando para iniciar o sistema em outro computador, que é justamente o que a PoC precisa demonstrar."));
+c.push(body("O backend foi prototipado inicialmente em Python e depois reescrito em C#, mantendo exatamente o mesmo contrato de API, de forma que o frontend não precisou de nenhuma alteração. A versão em Python permanece na pasta backend apenas como referência."));
 c.push(tit("5.3 Desenvolvimento do frontend"));
 c.push(body("A interface segue a jornada em quatro etapas visíveis em uma barra de progresso: serviço, data e horário, dados e confirmação. O cliente avança com um toque em cada etapa e pode voltar. Os textos vindos do servidor são inseridos no documento como texto, e não como HTML, o que evita a injeção de código por dados de entrada. A Figura 1 mostra a tela inicial e a Figura 2, o painel do profissional."));
 c.push(legenda("Figura 1 – Tela inicial da jornada do cliente"));
@@ -249,12 +250,13 @@ c.push(tabela([0.9, 3.3, 4.3], ["Método", "Rota", "Função"], [
 ]));
 c.push(fonte("elaborado pelo autor (2026)."));
 c.push(body("A regra central considera que dois intervalos se sobrepõem quando o início de um é anterior ao fim do outro e o fim do primeiro é posterior ao início do segundo. Um horário só é oferecido se o serviço inteiro cabe no expediente (09h00 às 18h00, em blocos de 30 minutos), não colide com nenhum agendamento e não está no passado. Essa verificação é refeita no momento da gravação, de modo que, se outra pessoa ocupou o horário no intervalo, o servidor responde com conflito e a interface devolve o cliente à escolha de horário."));
+c.push(body("A regra de negócio fica isolada na classe Agenda, que não depende de HTTP; as rotas da API apenas convertem as requisições e repassam a ela. A verificação de conflito e a gravação são executadas dentro de uma única transação do banco: se duas confirmações para o mesmo horário chegarem ao mesmo tempo, a segunda aguarda a primeira terminar e, ao verificar novamente, já encontra o horário ocupado e recebe a resposta de conflito."));
 c.push(tit("5.5 Testes e resultados"));
-c.push(body("Foram escritos nove testes automatizados para a regra de agendamento, e todos passaram. Eles cobrem: agenda vazia com 18 horários livres para serviço de 30 minutos; criação válida; recusa de horário idêntico; bloqueio de horários sobrepostos por serviço longo; limite do fim do expediente; remoção do horário anterior que invadiria um agendamento existente; validação de entradas inválidas; exclusão de horários passados no dia atual; e ordenação da listagem."));
+c.push(body("Foram escritos dez testes automatizados com xUnit para a regra de agendamento, e todos passaram. Eles cobrem: agenda vazia com 18 horários livres para serviço de 30 minutos; criação válida; recusa de horário idêntico; bloqueio de horários sobrepostos por serviço longo; limite do fim do expediente; remoção do horário anterior que invadiria um agendamento existente; validação de entradas inválidas; exclusão de horários passados no dia atual; ordenação da listagem; e concorrência, em que vinte confirmações simultâneas para o mesmo horário resultam em exatamente um agendamento gravado e dezenove recusas. Cada teste usa um banco SQLite temporário e independente."));
 c.push(body("Além dos testes, o servidor foi executado e a API foi exercitada por requisições reais: a criação de um agendamento retornou código 201, uma segunda tentativa no mesmo horário retornou 409 com mensagem ao cliente, a listagem refletiu o agendamento e o cancelamento retornou 200. Também foi verificado que a tentativa de acessar arquivos fora da pasta do frontend retorna 404. O critério de sucesso definido na seção 5.1 foi atendido, e a hipótese da PoC foi confirmada."));
 c.push(tit("5.6 Repositório no GitHub"));
-c.push(body("Todo o código-fonte foi organizado para publicação em um repositório do GitHub, com histórico de contribuições e um arquivo README.md contendo a descrição do projeto, as tecnologias, o passo a passo de execução, a descrição da API e a execução dos testes. Para executar, basta ter o Python 3.10 ou superior, clonar o repositório e rodar o comando python backend/server.py; a interface fica disponível em http://localhost:8000."));
-c.push(body([run("Endereço do repositório: ", { bold: true }), run("[COLAR AQUI O LINK DO REPOSITÓRIO NO GITHUB]")]));
+c.push(body("Todo o código-fonte foi organizado para publicação em um repositório do GitHub, com histórico de contribuições e um arquivo README.md contendo a descrição do projeto, as tecnologias, o passo a passo de execução, a descrição da API e a execução dos testes. Para executar, basta ter o .NET 8 SDK instalado, clonar o repositório e rodar o comando dotnet run --project backend-csharp/AgendaFacil.Api; a interface fica disponível em http://localhost:8000. Os testes são executados com o comando dotnet test."));
+c.push(body([run("Endereço do repositório: ", { bold: true }), run("https://github.com/moura001/agendafacil")]));
 c.push(tit("5.7 Vídeo de demonstração"));
 c.push(body("O vídeo de demonstração tem no máximo um minuto e mostra o projeto em funcionamento, seguindo o roteiro do Quadro 10."));
 c.push(legenda("Quadro 10 – Roteiro do vídeo"));
@@ -280,7 +282,8 @@ const rb = (t) => run(t, { bold: true });
 c.push(ref([rn("BOOKSY. "), rb("Sobre o Booksy"), rn(". [S. l.]: Booksy, [s.d.a]. Disponível em: https://biz.booksy.com/pt-br/sobre-nos. Acesso em: 21 nov. 2026.")]));
 c.push(ref([rn("BOOKSY. "), rb("Agendamento online"), rn(". [S. l.]: Booksy, [s.d.b]. Disponível em: https://biz.booksy.com/pt-br/por-que-o-booksy. Acesso em: 21 nov. 2026.")]));
 c.push(ref([rn("CAPTERRA. "), rb("Trinks"), rn(". [S. l.]: Capterra, [s.d.]. Disponível em: https://www.capterra.com/p/252863/Trinks/. Acesso em: 21 nov. 2026.")]));
-c.push(ref([rn("PYTHON SOFTWARE FOUNDATION. "), rb("http.server — HTTP servers"), rn(". Python documentation. [S. l.]: PSF, [s.d.]. Disponível em: https://docs.python.org/3/library/http.server.html. Acesso em: 21 nov. 2026.")]));
+c.push(ref([rn("MICROSOFT. "), rb("Minimal APIs overview"), rn(". Microsoft Learn. [S. l.]: Microsoft, [s.d.a]. Disponível em: https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/overview. Acesso em: 21 nov. 2026.")]));
+c.push(ref([rn("MICROSOFT. "), rb("Microsoft.Data.Sqlite overview"), rn(". Microsoft Learn. [S. l.]: Microsoft, [s.d.b]. Disponível em: https://learn.microsoft.com/dotnet/standard/data/sqlite/. Acesso em: 21 nov. 2026.")]));
 c.push(ref([rn("SENAC EAD. "), rb("Projeto Integrador: desenvolvimento de sistemas orientado a dispositivos móveis e baseados na web"), rn(". 1ª e 2ª etapas. Material de aula. [S. l.]: Senac EAD, 2026.")]));
 c.push(ref([rn("SQLITE. "), rb("SQLite documentation"), rn(". [S. l.]: SQLite, [s.d.]. Disponível em: https://www.sqlite.org/docs.html. Acesso em: 21 nov. 2026.")]));
 c.push(ref([rn("TRINKS. "), rb("Trinks.com"), rn(". Aplicativo. [S. l.]: Trinks, [s.d.]. Disponível em: https://apps.apple.com/ng/app/trinks-com/id628518776. Acesso em: 21 nov. 2026.")]));
