@@ -269,7 +269,7 @@ c.push(tabela([1.4, 7.1], ["Tempo", "Conteúdo"], [
   ["55–60 s", "Fechamento e menção ao repositório no GitHub"],
 ]));
 c.push(fonte("elaborado pelo autor (2026)."));
-c.push(body([run("Link do vídeo: ", { bold: true }), run("[COLAR AQUI O LINK PRIVADO DO YOUTUBE OU O CAMINHO DO MP4 NO GITHUB]")]));
+c.push(body([run("Link do vídeo: ", { bold: true }), run("https://github.com/moura001/agendafacil/blob/main/docs/video/demonstracao.mp4 (arquivo docs/video/demonstracao.mp4 do repositório)")]));
 
 c.push(tit("6 CONSIDERAÇÕES FINAIS"));
 c.push(body("Este trabalho percorreu o caminho que a disciplina propõe: da ideia à prática. Na primeira etapa, o problema foi delimitado, as soluções existentes foram analisadas e dois usuários foram descritos em personas, dando base à jornada de agendamento. Na segunda etapa, a parte de maior risco dessa jornada foi implementada como PoC, com frontend, backend, banco de dados e testes automatizados."));

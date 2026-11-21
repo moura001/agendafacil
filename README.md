@@ -10,6 +10,10 @@ O AgendaFácil permite que o cliente de um salão ou barbearia **agende um horá
 
 **Hipótese da PoC:** o sistema calcula corretamente os horários livres considerando a duração de cada serviço e **nunca permite dois agendamentos sobrepostos**. Isso é verificado por testes automatizados (`backend-csharp/AgendaFacil.Tests`).
 
+## Vídeo de demonstração
+
+Demonstração de 1 minuto do sistema em funcionamento: [docs/video/demonstracao.mp4](docs/video/demonstracao.mp4).
+
 ## Tecnologias
 
 | Camada | Tecnologia |
@@ -91,7 +95,7 @@ agendafacil/
 │   ├── index.html                # telas
 │   ├── style.css                 # estilos
 │   └── app.js                    # lógica da interface
-├── docs/                         # documento da entrega e capturas de tela
+├── docs/                         # documento da entrega, capturas de tela e vídeo
 └── README.md
 ```
 
