@@ -8,8 +8,8 @@ const {
 } = require("docx");
 
 const FONT = "Arial";
-const AUTOR = "[NOME COMPLETO DO ALUNO]";
-const LOCAL = "[CIDADE]";
+const AUTOR = "MARCELO MOURA";
+const LOCAL = "CONTAGEM";
 const ANO = "2026";
 const pages = fs.existsSync(process.argv[2] || "") ? JSON.parse(fs.readFileSync(process.argv[2])) : {};
 

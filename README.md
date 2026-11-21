@@ -120,4 +120,4 @@ python -m unittest backend/test_api.py -v
 
 ## Integrante
 
-- (nome completo do aluno)
+- Marcelo Moura
