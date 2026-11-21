@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+backend/agenda.db
+.DS_Store
+
+# .NET
+bin/
+obj/
+
+# bancos SQLite locais
+*.db

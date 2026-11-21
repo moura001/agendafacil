@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AgendaFácil</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Agenda<span>Fácil</span></h1>
+    <nav>
+      <button id="aba-cliente" class="ativa" type="button">Agendar</button>
+      <button id="aba-painel" type="button">Painel do profissional</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- JORNADA DO CLIENTE -->
+    <section id="tela-cliente">
+      <ol class="passos" aria-label="Etapas do agendamento">
+        <li id="p1" class="atual">1. Serviço</li>
+        <li id="p2">2. Data e horário</li>
+        <li id="p3">3. Seus dados</li>
+        <li id="p4">4. Confirmação</li>
+      </ol>
+
+      <div id="etapa1" class="etapa">
+        <h2>Qual serviço você quer?</h2>
+        <div id="lista-servicos" class="cards"></div>
+      </div>
+
+      <div id="etapa2" class="etapa oculto">
+        <h2>Escolha o dia e o horário</h2>
+        <label for="data">Data</label>
+        <input type="date" id="data">
+        <div id="horarios" class="horarios" aria-live="polite"></div>
+        <button class="voltar" data-volta="1" type="button">← Voltar</button>
+      </div>
+
+      <div id="etapa3" class="etapa oculto">
+        <h2>Quase lá! Seus dados</h2>
+        <p id="resumo" class="resumo"></p>
+        <form id="form-dados" novalidate>
+          <label for="nome">Nome</label>
+          <input id="nome" autocomplete="name" required>
+          <label for="telefone">Telefone com DDD</label>
+          <input id="telefone" inputmode="tel" autocomplete="tel" placeholder="(11) 91234-5678" required>
+          <p id="erro" class="erro" role="alert"></p>
+          <button type="submit" class="principal">Confirmar agendamento</button>
+        </form>
+        <button class="voltar" data-volta="2" type="button">← Voltar</button>
+      </div>
+
+      <div id="etapa4" class="etapa oculto">
+        <div class="sucesso">
+          <h2>✔ Agendamento confirmado!</h2>
+          <p id="confirmacao"></p>
+          <button id="novo" class="principal" type="button">Fazer novo agendamento</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAINEL DO PROFISSIONAL -->
+    <section id="tela-painel" class="oculto">
+      <h2>Agenda do dia</h2>
+      <label for="data-painel">Data</label>
+      <input type="date" id="data-painel">
+      <table>
+        <thead><tr><th>Horário</th><th>Cliente</th><th>Serviço</th><th>Telefone</th><th></th></tr></thead>
+        <tbody id="tabela"></tbody>
+      </table>
+      <p id="vazio" class="vazio oculto">Nenhum agendamento para este dia.</p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
